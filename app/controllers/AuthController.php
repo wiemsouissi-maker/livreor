@@ -1,31 +1,16 @@
 <?php
 
-// Check if Controller class exists, if not try different paths
-if (!class_exists('Controller')) {
-    $possiblePaths = [
-        __DIR__ . '/../core/Controller.php',
-        __DIR__ . '/../../core/Controller.php',
-        __DIR__ . '/../models/Controller.php'
-    ];
-
-    foreach ($possiblePaths as $path) {
-        if (file_exists($path)) {
-            require_once $path;
-            break;
-        }
-    }
-
-    // If still not found, create a basic Controller class
-    if (!class_exists('Controller')) {
-        class Controller
-        {
-            // Basic controller functionality
-        }
-    }
-}
+require_once __DIR__ . '/../core/Controller.php';
+require_once __DIR__ . '/../models/User.php';
 
 class AuthController extends Controller
 {
+    private $userModel;
+
+    public function __construct()
+    {
+        $this->userModel = new User();
+    }
 
     public function login()
     {
@@ -33,16 +18,27 @@ class AuthController extends Controller
             $login = trim($_POST['login'] ?? '');
             $password = $_POST['password'] ?? '';
 
-            // Simulation de connexion (à remplacer par vraie authentification)
-            if (!empty($login) && !empty($password)) {
-                $_SESSION['user_id'] = 1; // ID fictif
-                $_SESSION['login'] = $login;
+            if (empty($login) || empty($password)) {
+                $this->showError('Login et mot de passe requis.', '?action=login');
+                return;
+            }
 
-                echo "<p style='color: green;'>Connexion réussie !</p>";
-                echo "<p><a href='?action=guestbook'>Aller au livre d'or</a></p>";
+            $user = $this->userModel->login($login, $password);
+
+            if ($user) {
+                // Démarrer la session si ce n'est pas déjà fait
+                if (session_status() === PHP_SESSION_NONE) {
+                    session_start();
+                }
+
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['login'] = $user['login'];
+
+                $this->showSuccess('Connexion réussie !', '?action=guestbook');
                 return;
             } else {
-                echo "<p style='color: red;'>Login et mot de passe requis.</p>";
+                $this->showError('Login ou mot de passe incorrect.', '?action=login');
+                return;
             }
         }
 
@@ -62,13 +58,31 @@ class AuthController extends Controller
             $password = $_POST['password'] ?? '';
             $passwordConfirm = $_POST['password_confirm'] ?? '';
 
-            if (empty($login) || empty($password)) {
-                echo "<p style='color: red;'>Tous les champs sont requis.</p>";
-            } elseif ($password !== $passwordConfirm) {
-                echo "<p style='color: red;'>Les mots de passe ne correspondent pas.</p>";
+            if (empty($login) || empty($password) || empty($passwordConfirm)) {
+                $this->showError('Tous les champs sont requis.', '?action=register');
+                return;
+            }
+
+            if ($password !== $passwordConfirm) {
+                $this->showError('Les mots de passe ne correspondent pas.', '?action=register');
+                return;
+            }
+
+            if (strlen($password) < 4) {
+                $this->showError('Le mot de passe doit contenir au moins 4 caractères.', '?action=register');
+                return;
+            }
+
+            if ($this->userModel->loginExists($login)) {
+                $this->showError('Ce login existe déjà.', '?action=register');
+                return;
+            }
+
+            if ($this->userModel->create($login, $password)) {
+                $this->showSuccess('Inscription réussie ! Vous pouvez maintenant vous connecter.', '?action=login');
+                return;
             } else {
-                echo "<p style='color: green;'>Inscription réussie ! Vous pouvez maintenant vous connecter.</p>";
-                echo "<p><a href='?action=login'>Se connecter</a></p>";
+                $this->showError('Erreur lors de l\'inscription.', '?action=register');
                 return;
             }
         }
@@ -85,6 +99,11 @@ class AuthController extends Controller
 
     public function logout()
     {
+        // Démarrer la session si ce n'est pas déjà fait
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         // Détruire la session
         $_SESSION = array();
 
@@ -103,7 +122,6 @@ class AuthController extends Controller
 
         session_destroy();
 
-        echo "<p style='color: green;'>Vous avez été déconnecté.</p>";
-        echo "<p><a href='?action=home'>Retour à l'accueil</a></p>";
+        $this->showSuccess('Vous avez été déconnecté.', '?action=home');
     }
 }

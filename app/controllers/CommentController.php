@@ -13,19 +13,11 @@ class CommentController extends Controller
         $this->commentModel = new Comment();
     }
 
-    /**
-     * Redirect to a given URL
-     */
-    private function redirect($url)
-    {
-        header("Location: $url");
-        exit();
-    }
 
     /**
      * Get the authenticated user from session
      */
-    private function getAuthUser()
+    protected function getAuthUser()
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
