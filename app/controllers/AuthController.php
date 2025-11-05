@@ -26,11 +26,7 @@ class AuthController extends Controller
             $user = $this->userModel->login($login, $password);
 
             if ($user) {
-                // Démarrer la session si ce n'est pas déjà fait
-                if (session_status() === PHP_SESSION_NONE) {
-                    session_start();
-                }
-
+                // La session est déjà démarrée dans index.php
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['login'] = $user['login'];
 
@@ -42,13 +38,25 @@ class AuthController extends Controller
             }
         }
 
-        echo "<h1>Connexion</h1>";
-        echo "<form method='post'>";
-        echo "<p><input type='text' name='login' placeholder='Login' required></p>";
-        echo "<p><input type='password' name='password' placeholder='Mot de passe' required></p>";
-        echo "<p><button type='submit'>Se connecter</button></p>";
+        echo "<div class='auth-container'>";
+        echo "<h1 class='auth-title'>🔐 Connexion</h1>";
+        echo "<form method='post' class='auth-form'>";
+        echo "<div class='form-group'>";
+        echo "<label for='login'>Nom d'utilisateur</label>";
+        echo "<input type='text' id='login' name='login' placeholder='Entrez votre login' required>";
+        echo "</div>";
+        echo "<div class='form-group'>";
+        echo "<label for='password'>Mot de passe</label>";
+        echo "<input type='password' id='password' name='password' placeholder='Entrez votre mot de passe' required>";
+        echo "</div>";
+        echo "<button type='submit' class='auth-button'>Se connecter</button>";
         echo "</form>";
-        echo "<p><a href='?action=register'>S'inscrire</a> | <a href='?action=home'>Accueil</a></p>";
+        echo "<div class='auth-links'>";
+        echo "<a href='?action=register'>📝 Créer un compte</a>";
+        echo "<span class='auth-divider'>|</span>";
+        echo "<a href='?action=home'>🏠 Accueil</a>";
+        echo "</div>";
+        echo "</div>";
     }
 
     public function register()
@@ -87,22 +95,34 @@ class AuthController extends Controller
             }
         }
 
-        echo "<h1>Inscription</h1>";
-        echo "<form method='post'>";
-        echo "<p><input type='text' name='login' placeholder='Login' required></p>";
-        echo "<p><input type='password' name='password' placeholder='Mot de passe' required></p>";
-        echo "<p><input type='password' name='password_confirm' placeholder='Confirmer' required></p>";
-        echo "<p><button type='submit'>S'inscrire</button></p>";
+        echo "<div class='auth-container'>";
+        echo "<h1 class='auth-title'>📝 Inscription</h1>";
+        echo "<form method='post' class='auth-form'>";
+        echo "<div class='form-group'>";
+        echo "<label for='login'>Nom d'utilisateur</label>";
+        echo "<input type='text' id='login' name='login' placeholder='Choisissez un login' required>";
+        echo "</div>";
+        echo "<div class='form-group'>";
+        echo "<label for='password'>Mot de passe</label>";
+        echo "<input type='password' id='password' name='password' placeholder='Minimum 4 caractères' required>";
+        echo "</div>";
+        echo "<div class='form-group'>";
+        echo "<label for='password_confirm'>Confirmer le mot de passe</label>";
+        echo "<input type='password' id='password_confirm' name='password_confirm' placeholder='Confirmer votre mot de passe' required>";
+        echo "</div>";
+        echo "<button type='submit' class='auth-button'>Créer mon compte</button>";
         echo "</form>";
-        echo "<p><a href='?action=login'>Se connecter</a> | <a href='?action=home'>Accueil</a></p>";
+        echo "<div class='auth-links'>";
+        echo "<a href='?action=login'>🔐 J'ai déjà un compte</a>";
+        echo "<span class='auth-divider'>|</span>";
+        echo "<a href='?action=home'>🏠 Accueil</a>";
+        echo "</div>";
+        echo "</div>";
     }
 
     public function logout()
     {
-        // Démarrer la session si ce n'est pas déjà fait
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        // La session est déjà démarrée dans index.php
 
         // Détruire la session
         $_SESSION = array();

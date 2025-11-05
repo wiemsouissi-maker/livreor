@@ -13,18 +13,6 @@ class HomeController extends Controller
         $this->commentModel = new Comment();
     }
 
-    protected function getAuthUser()
-    {
-        session_start();
-        if (isset($_SESSION['user_id']) && isset($_SESSION['login'])) {
-            return [
-                'id' => $_SESSION['user_id'],
-                'login' => $_SESSION['login']
-            ];
-        }
-        return null;
-    }
-
     public function index()
     {
         $user = $this->getAuthUser();

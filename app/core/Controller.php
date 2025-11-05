@@ -19,10 +19,7 @@ class Controller
      */
     protected function getAuthUser()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
+        // La session est déjà démarrée dans index.php
         if (isset($_SESSION['user_id']) && isset($_SESSION['login'])) {
             return [
                 'id' => $_SESSION['user_id'],
@@ -59,8 +56,10 @@ class Controller
      */
     protected function showSuccess($message, $returnLink = '?action=guestbook')
     {
-        echo "<p style='color: green; background: #d4edda; padding: 10px; border: 1px solid #c3e6cb; border-radius: 5px;'>✅ " . $this->escape($message) . "</p>";
-        echo "<p><a href='" . $returnLink . "' style='background: #28a745; color: white; padding: 8px 15px; text-decoration: none; border-radius: 3px;'>Continuer</a></p>";
+        echo "<div class='auth-container'>";
+        echo "<div class='auth-message auth-success'>✅ " . $this->escape($message) . "</div>";
+        echo "<div class='auth-links'><a href='" . $returnLink . "'>Continuer</a></div>";
+        echo "</div>";
     }
 
     /**
@@ -68,7 +67,9 @@ class Controller
      */
     protected function showError($message, $returnLink = '?action=guestbook')
     {
-        echo "<p style='color: #721c24; background: #f8d7da; padding: 10px; border: 1px solid #f5c6cb; border-radius: 5px;'>❌ " . $this->escape($message) . "</p>";
-        echo "<p><a href='" . $returnLink . "' style='background: #dc3545; color: white; padding: 8px 15px; text-decoration: none; border-radius: 3px;'>Retour</a></p>";
+        echo "<div class='auth-container'>";
+        echo "<div class='auth-message auth-error'>❌ " . $this->escape($message) . "</div>";
+        echo "<div class='auth-links'><a href='" . $returnLink . "'>Retour</a></div>";
+        echo "</div>";
     }
 }

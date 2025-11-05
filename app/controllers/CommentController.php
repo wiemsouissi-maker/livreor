@@ -13,26 +13,6 @@ class CommentController extends Controller
         $this->commentModel = new Comment();
     }
 
-
-    /**
-     * Get the authenticated user from session
-     */
-    protected function getAuthUser()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (!empty($_SESSION['user_id'])) {
-            return [
-                'id' => $_SESSION['user_id'],
-                'login' => $_SESSION['login'] ?? ''
-            ];
-        }
-
-        return null;
-    }
-
     /**
      * Afficher le formulaire d'ajout de commentaire
      */
