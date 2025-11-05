@@ -38,45 +38,57 @@ class HomeController extends Controller
         $comments = $this->commentModel->getAll();
         $totalComments = $this->commentModel->count();
 
-        echo "<h1>Livre d'Or</h1>";
-        echo "<p><strong>$totalComments</strong> commentaire" . ($totalComments > 1 ? 's' : '') . "</p>";
+        echo "<div class='guestbook-container'>";
+        echo "<div class='guestbook-header'>";
+        echo "<h1 class='guestbook-title'>📖 Livre d'Or</h1>";
+        echo "<div class='guestbook-stats'>";
+        echo "<strong>$totalComments</strong> commentaire" . ($totalComments > 1 ? 's' : '') . " publié" . ($totalComments > 1 ? 's' : '');
+        echo "</div>";
 
         if ($user) {
-            echo "<p><a href='?action=create_comment' style='background: #3498db; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;'>Ajouter un commentaire</a></p>";
+            echo "<a href='?action=create_comment' class='add-comment-btn'>✍️ Ajouter un commentaire</a>";
         } else {
-            echo "<p>Tu dois <a href='?action=login'>te connecter</a> pour poster un commentaire.</p>";
+            echo "<div class='login-prompt'>";
+            echo "💡 <a href='?action=login'>Connectez-vous</a> pour partager votre avis et laisser un commentaire !";
+            echo "</div>";
         }
+        echo "</div>";
 
         if (!empty($comments)) {
             foreach ($comments as $comment) {
                 $date = new DateTime($comment['date']);
                 $dateFormatted = $date->format('d/m/Y à H:i');
 
-                echo "<div style='background: #f8f9fa; padding: 15px; margin: 10px 0; border-left: 4px solid #3498db; border-radius: 5px;'>";
-                echo "<p style='color: #666; font-size: 0.9em; margin-bottom: 10px;'>";
-                echo "Posté le " . htmlspecialchars($dateFormatted) . " par <strong>" . htmlspecialchars($comment['login']) . "</strong>";
-                echo "</p>";
-                echo "<div style='line-height: 1.6;'>" . nl2br(htmlspecialchars($comment['commentaire'])) . "</div>";
+                echo "<div class='comment-card'>";
+                echo "<div class='comment-meta'>";
+                echo "<span class='date'>📅 " . htmlspecialchars($dateFormatted) . "</span>";
+                echo "<span class='author'>👤 " . htmlspecialchars($comment['login']) . "</span>";
+                echo "</div>";
+                echo "<div class='comment-body'>" . nl2br(htmlspecialchars($comment['commentaire'])) . "</div>";
 
                 // Boutons de modification et suppression pour le propriétaire du commentaire
                 if ($user && $user['id'] == $comment['id_utilisateur']) {
-                    echo "<p style='margin-top: 10px;'>";
-                    echo "<a href='?action=edit_comment&id=" . $comment['id'] . "' ";
-                    echo "style='background: #f39c12; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px; font-size: 0.8em; margin-right: 5px;'>";
-                    echo "Modifier</a>";
-                    echo "<a href='?action=delete_comment&id=" . $comment['id'] . "' ";
-                    echo "onclick='return confirm(\"Êtes-vous sûr de vouloir supprimer ce commentaire ?\")' ";
-                    echo "style='background: #e74c3c; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px; font-size: 0.8em;'>";
-                    echo "Supprimer</a>";
-                    echo "</p>";
+                    echo "<div class='comment-actions'>";
+                    echo "<a href='?action=edit_comment&id=" . $comment['id'] . "' class='comment-btn comment-btn-edit'>";
+                    echo "✏️ Modifier</a>";
+                    echo "<a href='?action=delete_comment&id=" . $comment['id'] . "' class='comment-btn comment-btn-delete' ";
+                    echo "onclick='return confirm(\"Êtes-vous sûr de vouloir supprimer ce commentaire ?\")'>";
+                    echo "🗑️ Supprimer</a>";
+                    echo "</div>";
                 }
 
                 echo "</div>";
             }
         } else {
-            echo "<p>Aucun commentaire pour le moment.</p>";
+            echo "<div class='no-comments'>";
+            echo "📝 Aucun commentaire pour le moment.<br>";
+            echo "<small>Soyez le premier à partager votre avis !</small>";
+            echo "</div>";
         }
 
-        echo "<p><a href='?action=home'>Retour à l'accueil</a></p>";
+        echo "<div class='guestbook-footer'>";
+        echo "<a href='?action=home'>← Retour à l'accueil</a>";
+        echo "</div>";
+        echo "</div>";
     }
 }
