@@ -39,6 +39,7 @@ class AuthController extends Controller
         }
 
         echo "<div class='auth-container'>";
+        echo "<img src='/livreor/assets/insta.jpg' alt='Connexion' class='auth-image'>";
         echo "<h1 class='auth-title'>🔐 Connexion</h1>";
         echo "<form method='post' class='auth-form'>";
         echo "<div class='form-group'>";
@@ -96,6 +97,7 @@ class AuthController extends Controller
         }
 
         echo "<div class='auth-container'>";
+        echo "<img src='/livreor/assets/insta.jpg' alt='Inscription' class='auth-image'>";
         echo "<h1 class='auth-title'>📝 Inscription</h1>";
         echo "<form method='post' class='auth-form'>";
         echo "<div class='form-group'>";
